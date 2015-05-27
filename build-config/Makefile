@@ -1,7 +1,7 @@
 #-------------------------------------------------------------------------------
 #>
 #
-#  Copyright (C) 2013-2014 Curt Brune <curt@cumulusnetworks.com>
+#  Copyright (C) 2013-2015 Curt Brune <curt@cumulusnetworks.com>
 #  Copyright (C) 2014-2015 Carlos Cardenas <carlos@cumulusnetworks.com>
 #  Copyright (C) 2014 david_yang <david_yang@accton.com>
 #  Copyright (C) 2014 Mandeep Sandhu <mandeep.sandhu@cyaninc.com>
@@ -274,9 +274,6 @@ include make/kernel-download.make
 include make/uclibc-download.make
 include make/xtools.make
 include make/sysroot.make
-ifeq ($(SYSLINUX_ENABLE),yes)
-include make/syslinux.make
-endif
 include make/kernel.make
 ifeq ($(UBOOT_ENABLE),yes)
   include make/u-boot.make
@@ -303,6 +300,11 @@ endif
 ifeq ($(GRUB_ENABLE),yes)
   include make/grub.make
 endif
+ifeq ($(UEFI_ENABLE),yes)
+  include make/pciutils.make
+  include make/efivar.make
+  include make/efibootmgr.make
+endif
 ifeq ($(I2CTOOLS_ENABLE),yes)
   include make/i2ctools.make
 endif
@@ -317,6 +319,9 @@ ifeq ($(MTREE_ENABLE),yes)
 endif
 ifeq ($(ACPI_ENABLE),yes)
   include make/acpica-tools.make
+endif
+ifeq ($(DOSFSTOOLS_ENABLE),yes)
+  include make/dosfstools.make
 endif
 include make/images.make
 include make/demo.make
@@ -374,8 +379,8 @@ machine-prefix:
 	$(Q) echo $(MACHINE_PREFIX)
 
 # Install required build packages for a x86_64 debian based build host
-DEBIAN_BUILD_HOST_PACKAGES	= build-essential stgit u-boot-tools \
-				  gperf device-tree-compiler python-all-dev genisoimage \
+DEBIAN_BUILD_HOST_PACKAGES	= build-essential stgit u-boot-tools util-linux \
+				  gperf device-tree-compiler python-all-dev xorriso \
 				  autoconf automake bison flex texinfo libtool libtool-bin \
 				  realpath gawk libncurses5 libncurses5-dev bc
 
